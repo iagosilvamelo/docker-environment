@@ -1,0 +1,80 @@
+version: "2"
+services:
+  Liga_v2_web:
+    container_name: liga_v2_web
+    image: "node:12"
+    working_dir: /app
+    volumes:
+      - ./application/liga-web:/app
+    expose:
+      - "8080"
+    ports:
+      - "8080:8080"
+    command: >
+      sh -c "npm i && npm start"
+    networks:
+        - liga-v2
+
+  liga_v2_php:
+    container_name: liga_v2_php
+    build:
+        context: ./build/php
+        dockerfile: Dockerfile
+    image: dad-eng/liga-php:php7.3
+    ports:
+        - "8012:8012"
+        - "8013:8013"
+    volumes:
+        - './application/liga-api:/var/www/html/liga-api'
+        - './application/pabx-api:/var/www/html/pabx-api'
+    networks:
+        - liga-v2
+
+  liga_v2_pabx: # LiGa v2 container PABX
+    container_name: liga_v2_pabx
+    build:
+        context: ./build/pabx
+        dockerfile: Dockerfile
+    image: dad-eng/liga-pabx:asterisk13.21
+    environment:
+        - APPLICATION_ENV="development"
+        - PHP_IDE_CONFIG="serverName=application"
+    ports:
+        - "5060:5060/udp"
+        - "10000-10010:10000-10010/udp"
+    volumes:
+        - './application/pabx-api:/opt/liga/pabx/api'
+        - './application/pabx-asterisk/records:/records'
+        - './application/pabx-asterisk/etc/asterisk:/etc/asterisk'
+        - './application/pabx-asterisk/var/lib/asterisk:/var/lib/asterisk'
+        - './build/pabx/php-fpm.d/www.conf:/etc/php-fpm.d/www.conf'
+        - '${HOME}/.composer:/root/.composer'
+    networks:
+        - liga-v2
+
+  liga_v2_mysql:
+    container_name: liga_v2_mysql
+    image: mysql:5.7
+    environment:
+        MYSQL_ROOT_PASSWORD: "12345678"
+        MYSQL_DATABASE: "LIGA"
+        MYSQL_DATABASE: "PABX"
+    ports:
+        - "3306:3306"
+    volumes:
+        - liga-mysql-data:/var/lib/mysql
+    networks:
+        - liga-v2
+
+networks: 
+  liga-v2:
+      driver: bridge
+      driver_opts:
+        com.docker.network.enable_ipv6: "false"
+      ipam:
+        driver: "default"
+        config:
+          - subnet: "192.168.60.0/24"
+
+volumes:
+  liga-mysql-data:
