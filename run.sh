@@ -3,4 +3,4 @@
 alias pabx-api="/usr/bin/php /home/iago/Projetos/Liga-v2/application/pabx-api/artisan"
 alias liga-api="/usr/bin/php /home/iago/Projetos/Liga-v2/application/liga-api/artisan"
 
-sudo docker-compose up -d
+docker-compose up -d

@@ -89,10 +89,6 @@ RUN cd /usr/src/asterisk-13.* && ./configure --libdir=/usr/lib64 && make && make
 # Alias
 # alias liga='/usr/bin/php /opt/liga/pabx/api/artisan'
 
-# Install Apache
-RUN yum update -y httpd
-RUN yum install -y httpd
-
 ADD supervisor.conf /etc/supervisor.conf
 
 WORKDIR /opt
