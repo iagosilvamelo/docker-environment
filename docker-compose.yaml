@@ -5,7 +5,7 @@ services:
     image: "node:12"
     working_dir: /app
     volumes:
-      - ./application/liga-web:/app
+      - ../App/liga-web:/app
     expose:
       - "8080"
     ports:
@@ -25,8 +25,8 @@ services:
         - "8012:8012"
         - "8013:8013"
     volumes:
-        - './application/liga-api:/var/www/html/liga-api'
-        - './application/pabx-api:/var/www/html/pabx-api'
+        - '../App/liga-api:/var/www/html/liga-api'
+        - '../App/pabx-api:/var/www/html/pabx-api'
     networks:
         - liga-v2
 
@@ -38,15 +38,15 @@ services:
     image: dad-eng/liga-pabx:asterisk13.21
     environment:
         - APPLICATION_ENV="development"
-        - PHP_IDE_CONFIG="serverName=application"
+        - PHP_IDE_CONFIG="serverName./App"
     ports:
         - "5060:5060/udp"
         - "10000-10010:10000-10010/udp"
     volumes:
-        - './application/pabx-api:/opt/liga/pabx/api'
-        - './application/pabx-asterisk/records:/records'
-        - './application/pabx-asterisk/etc/asterisk:/etc/asterisk'
-        - './application/pabx-asterisk/var/lib/asterisk:/var/lib/asterisk'
+        - '../App/pabx-api:/opt/liga/pabx/api'
+        - '../App/pabx-asterisk/records:/records'
+        - '../App/pabx-asterisk/etc/asterisk:/etc/asterisk'
+        - '../App/pabx-asterisk/var/lib/asterisk:/var/lib/asterisk'
         - './build/pabx/php-fpm.d/www.conf:/etc/php-fpm.d/www.conf'
         - '${HOME}/.composer:/root/.composer'
     networks:
